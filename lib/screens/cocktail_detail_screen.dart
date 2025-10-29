@@ -34,6 +34,8 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
 
     final cocktailDetail = state.cocktail!;
 
+    Map<String, String> ingedientsAndMeasures() => {};
+
     final ingredients = [
       cocktailDetail.strIngredient1,
       cocktailDetail.strIngredient2,
@@ -51,6 +53,28 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
       cocktailDetail.strIngredient14,
       cocktailDetail.strIngredient15,
     ];
+
+    final measures = [
+      cocktailDetail.strMeasure1,
+      cocktailDetail.strMeasure2,
+      cocktailDetail.strMeasure3,
+      cocktailDetail.strMeasure4,
+      cocktailDetail.strMeasure5,
+      cocktailDetail.strMeasure6,
+      cocktailDetail.strMeasure7,
+      cocktailDetail.strMeasure8,
+      cocktailDetail.strMeasure9,
+      cocktailDetail.strMeasure10,
+      cocktailDetail.strMeasure11,
+      cocktailDetail.strMeasure12,
+      cocktailDetail.strMeasure13,
+      cocktailDetail.strMeasure14,
+      cocktailDetail.strMeasure15,
+    ];
+
+    final measureText = measures
+        .where((mea) => mea != null && mea.trim().isNotEmpty)
+        .join(", ");
 
     // Filter null und leere Strings
     final ingredientText = ingredients
@@ -73,15 +97,68 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
             cocktailDetail.strDrinkThumb ??
                 "https://placehold.co/600x400?text=No\nImage",
           ),
-          Text(cocktailDetail.strDrink),
-          Text("Category: ${cocktailDetail.strCategory}"),
-          Text("${cocktailDetail.strAlcoholic}"),
-          Text("glass: ${cocktailDetail.strGlass}"),
-          Text("Instructions: ${cocktailDetail.strInstructions}"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                Text(cocktailDetail.strDrink),
+                Text("Category: ${cocktailDetail.strCategory}"),
+                Text("${cocktailDetail.strAlcoholic}"),
+                Text("glass: ${cocktailDetail.strGlass}"),
+                Text("Instructions:"),
+                Text("${cocktailDetail.strInstructions}"),
 
-          Text("Ingedients:"),
-          Text(ingredientText), //TODO: Weitermachen mit der detailansicht!
-          
+                const Text(
+                  "Ingredients:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+
+                // Wir erzeugen dynamisch eine Liste aus Ingredient + Measure Paaren
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(ingredients.length, (index) {
+                    final ingredient = ingredients[index];
+                    final measure = measures[index];
+
+                    // Wir überspringen Einträge, die leer oder null sind
+                    if (ingredient == null || ingredient.trim().isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        children: [
+                          // Ingredient
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              ingredient,
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          // Measure (optional)
+                          if (measure != null && measure.trim().isNotEmpty)
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                measure,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ), //TODO: Weitermachen mit der detailansicht!
         ],
       ),
     );
