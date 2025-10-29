@@ -81,6 +81,7 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
 
           Text("Ingedients:"),
           Text(ingredientText), //TODO: Weitermachen mit der detailansicht!
+          
         ],
       ),
     );
