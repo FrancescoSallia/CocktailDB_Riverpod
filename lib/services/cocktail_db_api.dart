@@ -5,6 +5,7 @@ import 'package:logger/web.dart';
 import 'package:riverpod_lerning_flutter/models/category_responce.dart';
 import 'package:riverpod_lerning_flutter/models/cocktail.dart';
 import 'package:riverpod_lerning_flutter/models/cocktail_responce.dart';
+import 'package:riverpod_lerning_flutter/models/states/cocktail_list_state.dart';
 
 class CocktailDbApi {
   CocktailDbApi();
@@ -91,6 +92,34 @@ class CocktailDbApi {
       }
     } on Exception catch (e) {
       log.e("Error in CocktailDbApi (cocktailDetail): $e");
+      rethrow;
+    }
+  }
+
+  // www.thecocktaildb.com/api/json/v1/1/search.php?f=a
+  Future<CocktailResponce?> searchCocktail(String query) async {
+    try {
+      final url = Uri.parse(
+        'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${query.toLowerCase()}',
+      );
+      final responce = await http.get(url);
+
+      if (responce.statusCode == 200) {
+        final data = jsonDecode(responce.body);
+        final drinks = data['drinks'];
+
+        if (drinks == null) {
+          log.w("Keine Cocktails gefunden für '$query'");
+          return null; // oder eine leere CocktailResponce zurückgeben
+        }
+
+        log.d("api function successfull: $data");
+        return CocktailResponce.fromJson(data);
+      } else {
+        throw Exception("Fehler beim Laden von searchCocktal nach query");
+      }
+    } on Exception catch (e) {
+      log.e("Error in CocktailDbApi (searchCocktail): $e");
       rethrow;
     }
   }

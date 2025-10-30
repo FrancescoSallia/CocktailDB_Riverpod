@@ -90,76 +90,93 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
         surfaceTintColor: Colors.transparent,
       ),
       backgroundColor: const Color.fromARGB(255, 35, 3, 18),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            cocktailDetail.strDrinkThumb ??
-                "https://placehold.co/600x400?text=No\nImage",
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                Text(cocktailDetail.strDrink),
-                Text("Category: ${cocktailDetail.strCategory}"),
-                Text("${cocktailDetail.strAlcoholic}"),
-                Text("glass: ${cocktailDetail.strGlass}"),
-                Text("Instructions:"),
-                Text("${cocktailDetail.strInstructions}"),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(
+              cocktailDetail.strDrinkThumb ??
+                  "https://placehold.co/600x400?text=No\nImage",
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  Text(cocktailDetail.strDrink),
+                  Text("Category: ${cocktailDetail.strCategory}"),
+                  Text("${cocktailDetail.strAlcoholic}"),
+                  Text("glass: ${cocktailDetail.strGlass}"),
+                  Text("Instructions:"),
+                  Text("${cocktailDetail.strInstructions}"),
+                  SizedBox(height: 20),
+                  Center(
+                    child: const Text(
+                      "Ingredients:",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
 
-                const Text(
-                  "Ingredients:",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                  // Wir erzeugen dynamisch eine Liste aus Ingredient + Measure Paaren
+                  Container(
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(ingredients.length, (index) {
+                        final ingredient = ingredients[index];
+                        final measure = measures[index];
 
-                // Wir erzeugen dynamisch eine Liste aus Ingredient + Measure Paaren
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(ingredients.length, (index) {
-                    final ingredient = ingredients[index];
-                    final measure = measures[index];
+                        // Wir überspringen Einträge, die leer oder null sind
+                        if (ingredient == null || ingredient.trim().isEmpty) {
+                          return const SizedBox.shrink();
+                        }
 
-                    // Wir überspringen Einträge, die leer oder null sind
-                    if (ingredient == null || ingredient.trim().isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
-                        children: [
-                          // Ingredient
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              ingredient,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          ),
-                          // Measure (optional)
-                          if (measure != null && measure.trim().isNotEmpty)
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                measure,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            children: [
+                              // Ingredient
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  ingredient,
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ), //TODO: Weitermachen mit der detailansicht!
-        ],
+                              // Measure (optional)
+                              if (measure != null && measure.trim().isNotEmpty)
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    measure,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ), //TODO: Weitermachen mit der detailansicht!
+            SizedBox(height: 50),
+            // Text(cocktailDetail.strVideo),
+          ],
+        ),
       ),
     );
   }

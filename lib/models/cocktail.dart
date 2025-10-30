@@ -4,6 +4,7 @@ class Cocktail {
   final String? strCategory;
   final String? strAlcoholic;
   final String? strGlass;
+  // final String strVideo;
   final String? strInstructions;
   final String? strDrinkThumb;
   final String? strIngredient1;
@@ -43,6 +44,7 @@ class Cocktail {
     required this.strCategory,
     required this.strAlcoholic,
     required this.strGlass,
+    // required this.strVideo,
     required this.strInstructions,
     required this.strDrinkThumb,
     required this.strIngredient1,
@@ -82,6 +84,7 @@ class Cocktail {
     "strCategory": strCategory,
     "strAlcoholic": strAlcoholic,
     "strGlass": strGlass,
+    // "strVideo" : strVideo,
     "strInstructions": strInstructions,
     "strDrinkThumb": strDrinkThumb,
     "strIngredient1": strIngredient1,
@@ -123,6 +126,7 @@ class Cocktail {
       strCategory: json["strCategory"],
       strAlcoholic: json["strAlcoholic"],
       strGlass: json["strGlass"],
+      // strVideo: json["strVideo"],
       strInstructions: json["strInstructions"],
       strDrinkThumb: json["strDrinkThumb"],
       strIngredient1: json["strIngredient1"],
