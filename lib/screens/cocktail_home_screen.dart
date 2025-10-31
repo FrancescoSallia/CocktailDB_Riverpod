@@ -14,6 +14,8 @@ class CocktailHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
+  final SearchController _controller = SearchController();
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +27,12 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
           .fetchCocktails(isAlcoholic: widget.isAlcoholic);
       ref.read(categoryListFromProvider.notifier).fetchCategories();
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -250,7 +258,16 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
     final notifier = ref.read(cocktailList.notifier);
 
     return SearchAnchor.bar(
+      searchController: _controller,
       barHintText: "Search cocktails...",
+      barTrailing: [
+        IconButton(
+          onPressed: () {
+            _controller.clear();
+          },
+          icon: Icon(Icons.cancel),
+        ),
+      ],
       onChanged: (value) async {
         if (value.isEmpty) return;
         await ref.read(cocktailList.notifier).searchCocktail(value);
@@ -302,96 +319,5 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
         });
       },
     );
-    //   return SearchAnchor(
-    //     builder: (BuildContext context, SearchController controller) {
-    //       return Padding(
-    //         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-    //         child: SizedBox(
-    //           height: 50,
-    //           child: SearchBar(
-    //             controller: controller,
-    //             textStyle: WidgetStatePropertyAll<TextStyle>(
-    //               TextStyle(color: Colors.black),
-    //             ),
-    //             hintStyle: WidgetStatePropertyAll<TextStyle>(
-    //               TextStyle(color: Colors.black),
-    //             ),
-    //             hintText: "Search by Cocktail name, Category...",
-    //             backgroundColor: WidgetStatePropertyAll(Colors.white),
-    //             padding: const WidgetStatePropertyAll<EdgeInsets>(
-    //               EdgeInsets.symmetric(horizontal: 16.0),
-    //             ),
-    //             onTap: () async {
-    //               controller.openView();
-    //               await notifier.searchCocktail(
-    //                 controller.text,
-    //               ); // TODO: schau dir onchange und ontap an die funktionen !
-    //             },
-    //             onChanged: (value) async {
-    //               controller.openView();
-    //               await notifier.searchCocktail(value); // ruft die API auf
-    //             },
-
-    //             leading: const Icon(Icons.search, color: Colors.black),
-    //             trailing: <Widget>[
-    //               Tooltip(
-    //                 message: 'Change brightness mode',
-    //                 child: IconButton(
-    //                   isSelected: true,
-    //                   onPressed: () {
-    //                     controller.clear();
-    //                   },
-    //                   icon: const Icon(Icons.cancel, color: Colors.black),
-    //                   selectedIcon: const Icon(Icons.cancel, color: Colors.black),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //     suggestionsBuilder: (BuildContext context, SearchController controller) {
-    //       return [
-    //         Consumer(
-    //           builder: (context, ref, _) {
-    //             final state = ref.watch(cocktailList);
-    //             final cocktails = state.drinks;
-
-    //             if (state.isLoading) {
-    //               return const Center(
-    //                 child: Padding(
-    //                   padding: EdgeInsets.all(16.0),
-    //                   child: CircularProgressIndicator(),
-    //                 ),
-    //               );
-    //             }
-
-    //             if (cocktails.isEmpty) {
-    //               return const Padding(
-    //                 padding: EdgeInsets.all(16.0),
-    //                 child: Text("Keine Cocktails gefunden"),
-    //               );
-    //             }
-
-    //             return Column(
-    //               children: List.generate(cocktails.length, (int index) {
-    //                 final cocktail = cocktails[index];
-    //                 return ListTile(
-    //                   title: Text(cocktail.strDrink),
-    //                   trailing: ClipRRect(
-    //                     borderRadius: BorderRadius.circular(100),
-    //                     child: Image.network(cocktail.strDrinkThumb ?? ""),
-    //                   ),
-    //                   onTap: () {
-    //                     controller.closeView(cocktail.strDrink);
-    //                   },
-    //                 );
-    //               }),
-    //             );
-    //           },
-    //         ),
-    //       ];
-    //     },
-    //   );
   }
 }
