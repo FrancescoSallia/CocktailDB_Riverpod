@@ -28,9 +28,11 @@ It allows users to browse cocktails by category or alcohol content and view deta
 ## 📱 Screenshots
 
 <p align="center">
- <img src="./img/cocktail_list.png" width="200"> 
- <img src="./img/cocktail_detail.png" width="200"> 
- <img src="./img/cocktail_search.png" width="200"> 
+ <img src="./img/cocktail1.png" width="200">
+ <img src="./img/cocktail2.png" width="200"> 
+ <img src="./img/cocktail3.png" width="200"> 
+ <img src="./img/cocktail4.png" width="200">
+ <img src="./img/cocktail5.png" width="200">
 </p>
 
 ---
