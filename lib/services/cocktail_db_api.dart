@@ -111,8 +111,6 @@ class CocktailDbApi {
           log.w("Keine Cocktails gefunden für '$query'");
           return null; // oder eine leere CocktailResponce zurückgeben
         }
-
-        log.d("api function successfull: $data");
         return CocktailResponce.fromJson(data);
       } else {
         throw Exception("Fehler beim Laden von searchCocktal nach query");

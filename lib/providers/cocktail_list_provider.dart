@@ -59,11 +59,17 @@ class CocktailListProvider extends StateNotifier<CocktailListState> {
       final drinks = responce?.drinks ?? [];
 
       state = state.copyWith(drinks: drinks, isLoading: false, error: null);
-      _log.d("api function successfull: $state");
     } on Exception catch (e) {
-      _log.e(e);
       _log.e("Fehler beim Suchen: $e");
       state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  void resetError() {
+    state = state.copyWith(error: null);
+  }
+//For Debuging HomeScreen
+  void setError(String message) {
+    state = state.copyWith(error: message, isLoading: false);
   }
 }

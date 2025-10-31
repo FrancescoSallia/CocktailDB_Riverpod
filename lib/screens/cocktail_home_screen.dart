@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_lerning_flutter/models/cocktail.dart';
 import 'package:riverpod_lerning_flutter/providers/category_list_provider.dart';
 import 'package:riverpod_lerning_flutter/providers/cocktail_list_provider.dart';
 import 'package:riverpod_lerning_flutter/screens/cocktail_detail_screen.dart';
 import 'package:riverpod_lerning_flutter/screens/cocktail_list_screen.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CocktailHomeScreen extends ConsumerStatefulWidget {
   final bool isAlcoholic;
@@ -37,8 +41,30 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cocktails = ref.watch(cocktailList);
-    final categories = ref.watch(categoryListFromProvider);
+    final state = ref.watch(cocktailList);
+
+    // 🧩 Wenn ein Fehler da ist, zeig einen Dialog
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state.error != null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Fehler"),
+            content: Text(state.error!),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Optional: Fehler zurücksetzen, damit Dialog nicht erneut aufpoppt
+                  ref.read(cocktailList.notifier).resetError();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    });
     return Scaffold(
       resizeToAvoidBottomInset: true,
       drawer: Drawer(backgroundColor: Color.fromARGB(255, 29, 0, 13)),
@@ -65,7 +91,7 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
               ),
             ),
             _searchbar(),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 15.0,
@@ -81,14 +107,14 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
               ),
             ),
             categoryList(),
-            SizedBox(height: 30),
+            SizedBox(height: 50),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 15.0,
-                vertical: 6,
+                vertical: 10,
               ),
               child: Text(
-                "Explore Cocktails",
+                "Explore Drink's",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -98,104 +124,134 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
             ),
 
             SizedBox(
-              height: 300,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
+              // height: 400,
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 14,
+                  crossAxisCount: 2,
+                ),
+                scrollDirection: Axis.vertical,
+                itemCount: state.drinks.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    width: 240,
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.only(
-                      left: index == 0 ? 15 : 25,
-                      right: 20,
-                    ),
-                    decoration: BoxDecoration(
-                      // color: Color.fromARGB(255, 236, 138, 231),
-                      color: Color.fromARGB(
-                        255,
-                        14,
-                        1,
-                        7,
-                      ).withValues(alpha: 0.8),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Stack(
-                      alignment: AlignmentGeometry.bottomLeft,
-                      clipBehavior: Clip.none,
-                      children: [
-                        SizedBox(height: 100),
-                        Positioned(
-                          left: 80,
-                          bottom: 120,
-                          child: Stack(
-                            alignment: AlignmentGeometry.center,
-                            children: [
-                              Container(
-                                height: 160,
-                                width: 160,
-                                decoration: BoxDecoration(
-                                  color: Color.fromARGB(
-                                    255,
-                                    236,
-                                    138,
-                                    231,
-                                  ).withValues(alpha: 0.8),
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 150,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadiusGeometry.circular(
-                                    100,
-                                  ),
-                                  child: Image.network(
-                                    "https://www.thecocktaildb.com/images/media/drink/yk70e31606771240.jpg",
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            spacing: 20,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Title $index",
-                                style: TextStyle(
-                                  // color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              Text(
-                                "Category $index",
-                                style: TextStyle(
-                                  // color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              Text(
-                                "Alcoholic ",
-                                style: TextStyle(
-                                  // color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  final cocktail = state.drinks[index];
+
+                  if (state.isLoading) {
+                    return Skeletonizer(
+                      //Beim Laden den Skeletonizer anzeigen lassen
+                      enabled: true,
+                      child: exploreListItem(context, cocktail, index),
+                    );
+                  } else {
+                    final cocktail = state.drinks[index];
+                    return exploreListItem(context, cocktail, index);
+                  }
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+      //For Debbuging
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     ref
+      //         .read(cocktailList.notifier)
+      //         .setError("Test-Fehler: Verbindung fehlgeschlagen");
+      //   },
+      //   child: Icon(Icons.bug_report),
+      // ),
+    );
+  }
+
+  GestureDetector exploreListItem(
+    BuildContext context,
+    Cocktail cocktail,
+    int index,
+  ) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CocktailDetailScreen(id: cocktail.idDrink),
+        ),
+      ),
+      child: Container(
+        width: 230,
+        // padding: EdgeInsets.all(8),
+        // margin: EdgeInsets.only(left: 25, right: 20),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+              cocktail.strDrinkThumb ??
+                  "https://placehold.co/600x400?text=No\nImage",
+            ),
+            fit: BoxFit.cover,
+          ),
+          // color: Color.fromARGB(255, 236, 138, 231),
+          color: Color.fromARGB(255, 14, 1, 7).withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Stack(
+          alignment: AlignmentGeometry.bottomLeft,
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                spacing: 20,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white.withValues(alpha: 0.2),
+                          border: Border.all(
+                            width: 1,
+                            color: Color.fromARGB(255, 236, 138, 231),
+                          ),
+                        ),
+                        child: Text(
+                          maxLines: 1,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          cocktail.strDrink,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Text(
+                  //   cocktail.strCategory ?? "(No Category)",
+                  //   style: TextStyle(
+                  //     // color: Colors.black,
+                  //     fontWeight: FontWeight.w600,
+                  //     fontSize: 20,
+                  //   ),
+                  // ),
+                  // Text(
+                  //   cocktail.strAlcoholic != null
+                  //       ? cocktail.strAlcoholic == "Alcoholic"
+                  //             ? "Alcoholic"
+                  //             : "Non Alcoholic"
+                  //       : "Unknown",
+                  //   style: TextStyle(
+                  //     // color: Colors.black,
+                  //     fontWeight: FontWeight.w600,
+                  //     fontSize: 20,
+                  //   ),
+                  // ),
+                ],
               ),
             ),
           ],
@@ -254,9 +310,6 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
   }
 
   SearchAnchor _searchbar() {
-    final state = ref.watch(cocktailList);
-    final notifier = ref.read(cocktailList.notifier);
-
     return SearchAnchor.bar(
       searchController: _controller,
       barHintText: "Search cocktails...",
@@ -264,6 +317,9 @@ class _CocktailHomeScreenState extends ConsumerState<CocktailHomeScreen> {
         IconButton(
           onPressed: () {
             _controller.clear();
+            ref
+                .read(cocktailList.notifier)
+                .fetchCocktails(isAlcoholic: widget.isAlcoholic);
           },
           icon: Icon(Icons.cancel),
         ),

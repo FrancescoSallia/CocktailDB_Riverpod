@@ -25,4 +25,8 @@ class CocktailDetailProvider extends StateNotifier<CocktailDetailState> {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
+
+  void resetError() {
+    state = state.copyWith(error: null);
+  }
 }

@@ -23,6 +23,27 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(cocktailDetailProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state.error != null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Fehler"),
+            content: Text(state.error!),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Optional: Fehler zurücksetzen, damit Dialog nicht erneut aufpoppt
+                  ref.read(cocktailDetailProvider.notifier).resetError();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    });
 
     if (state.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

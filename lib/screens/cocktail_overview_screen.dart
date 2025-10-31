@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_lerning_flutter/models/states/cocktail_list_state.dart';
 import 'package:riverpod_lerning_flutter/providers/cocktail_list_provider.dart';
 import 'package:riverpod_lerning_flutter/screens/cocktail_home_screen.dart';
 
@@ -9,6 +10,28 @@ class CocktailOverviewScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(cocktailList.notifier);
+    final state = ref.watch(cocktailList);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state.error != null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Fehler"),
+            content: Text(state.error!),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Optional: Fehler zurücksetzen, damit Dialog nicht erneut aufpoppt
+                  ref.read(cocktailList.notifier).resetError();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 29, 0, 13),

@@ -75,12 +75,14 @@ class _CocktailListScreenState extends ConsumerState<CocktailListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          category.idDrink,
+                          category.strDrink,
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                         ),
                         Text(
-                          category.strDrink,
+                          category.strAlcoholic == "Alcoholic"
+                              ? "Alcoholic"
+                              : "Non Alcoholic",
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                         ),
