@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_lerning_flutter/providers/category_list_provider.dart';
 import 'package:riverpod_lerning_flutter/providers/cocktail_list_provider.dart';
 import 'package:riverpod_lerning_flutter/screens/cocktail_detail_screen.dart';
 import 'package:skeletonizer/skeletonizer.dart';

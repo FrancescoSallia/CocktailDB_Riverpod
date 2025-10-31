@@ -101,28 +101,46 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Column(
+                spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
-                  Text(cocktailDetail.strDrink),
-                  Text("Category: ${cocktailDetail.strCategory}"),
-                  Text("${cocktailDetail.strAlcoholic}"),
-                  Text("glass: ${cocktailDetail.strGlass}"),
-                  Text("Instructions:"),
-                  Text("${cocktailDetail.strInstructions}"),
-                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Alcoholic?"),
+                      Text(
+                        cocktailDetail.strAlcoholic == "Alcoholic"
+                            ? "Yes"
+                            : "No",
+                      ),
+                    ],
+                  ),
+                  // Text(cocktailDetail.strDrink),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Category: "),
+                      Text("${cocktailDetail.strCategory}"),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Glass:"),
+                      Text("${cocktailDetail.strGlass}"),
+                    ],
+                  ),
+                  SizedBox(height: 8),
                   Center(
                     child: const Text(
-                      "Ingredients:",
+                      "Ingredients",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-
-                  // Wir erzeugen dynamisch eine Liste aus Ingredient + Measure Paaren
                   Container(
                     padding: EdgeInsets.all(15),
                     decoration: BoxDecoration(
@@ -139,7 +157,6 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
                         if (ingredient == null || ingredient.trim().isEmpty) {
                           return const SizedBox.shrink();
                         }
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
@@ -170,6 +187,34 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
                       }),
                     ),
                   ),
+                  SizedBox(height: 5),
+
+                  Center(
+                    child: Text(
+                      "Instructions",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "${cocktailDetail.strInstructions}",
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Wir erzeugen dynamisch eine Liste aus Ingredient + Measure Paaren
                 ],
               ),
             ), //TODO: Weitermachen mit der detailansicht!

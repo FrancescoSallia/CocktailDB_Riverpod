@@ -5,7 +5,6 @@ import 'package:logger/web.dart';
 import 'package:riverpod_lerning_flutter/models/category_responce.dart';
 import 'package:riverpod_lerning_flutter/models/cocktail.dart';
 import 'package:riverpod_lerning_flutter/models/cocktail_responce.dart';
-import 'package:riverpod_lerning_flutter/models/states/cocktail_list_state.dart';
 
 class CocktailDbApi {
   CocktailDbApi();
